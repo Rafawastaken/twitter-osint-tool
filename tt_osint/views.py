@@ -72,9 +72,6 @@ def add_creds():
             db.session.add(new_creds)
             db.session.commit()
 
-
-        
-
     return render_template('add_creds.html')
 
 
