@@ -1,0 +1,25 @@
+{% extends 'base.html' %} {% block content %}
+<h3>Fill the following form to enable scrapping modules</h3>
+<a class="text-muted" href="#">See More</a>
+<form method="POST">
+  <input
+    name="username"
+    placeholder="Insert username address"
+    type="text"
+    required
+  />
+  <input
+    name="email"
+    placeholder="Insert email address"
+    type="email"
+    required
+  />
+  <input
+    name="password"
+    placeholder="Insert password"
+    type="password"
+    required
+  />
+  <input type="submit" value="Add" />
+</form>
+{% endblock %}

@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+<!-- content -->
+{% block content %}
+<div class="wraper">
+   <div class="header">
+      <a href='{{url_for("views.landing_page")}}' class="link-dark text-right">Twitter Osint Tool</a>
+      <div class="btns-control">
+         <a class="btn btn-dark" href="{{url_for('views.get_info')}}"
+            >Info</a
+            >
+         <a
+            class="btn btn-dark"
+            href="{{url_for('views.following_scrape')}}"
+            >Following Scrape</a
+            >
+         <a href='{{url_for("views.followers_scrape")}}' class="btn btn-dark">Followers Scrape</a>
+         <a href='{{url_for("views.media_scrape")}}' class="btn btn-dark">Media Scrape</a>
+         {% if has_query %}
+            <a href='{{url_for("views.landing_page")}}' class="btn btn-dark">Return</a>
+         {% endif %}
+         <form method="GET" action="search" class="form-style">
+            <input class="input-search width-75" placeholder="Search User" name="search-query" />
+            <button class="btn btn-outline-dark search-btn" type="input">Search</button>
+         </form>
+      </div>
+   </div>
+   <hr />
+   <div class="content">
+      <table
+         class="table table-hover table-striped text-center table-center-edited"
+         >
+         <thead>
+            <th>
+               #
+               <a class="link-dark"
+                  href="{{url_for('views.landing_page_order', type='id', direction='asc')}}"
+                  ><i class="fa-solid fa-arrow-down"></i
+                  ></a>
+               <a class="link-dark"
+                  href="{{url_for('views.landing_page_order', type='id', direction='desc')}}"
+                  ><i class="fa-solid fa-arrow-up"></i
+                  ></a>
+            </th>
+            <th>Img</th>
+            <th>
+               Username
+               <a class="link-dark"
+                  href="{{url_for('views.landing_page_order', type='username', direction='asc')}}"
+                  ><i class="fa-solid fa-arrow-down"></i
+                  ></a>
+               <a class="link-dark"
+                  href="{{url_for('views.landing_page_order', type='username', direction='desc')}}"
+                  ><i class="fa-solid fa-arrow-up"></i
+                  ></a>
+            </th>
+            <th>
+               Favorite
+               <a class="link-dark"
+                  href="{{url_for('views.landing_page_order', type='fav', direction='asc')}}"
+                  ><i class="fa-solid fa-arrow-down"></i
+                  ></a>
+               <a class="link-dark"
+                  href="{{url_for('views.landing_page_order', type='fav', direction='desc')}}"
+                  >
+                  <i class="fa-solid fa-arrow-up"></i
+                     >
+            </th>
+            <th>Info</th>
+            <th>Following</th>
+            <th>Followers</th>
+            <th>Media</th>
+            <th>Del</th>
+         </thead>
+         <tbody>
+         {% for target in targets.items %}
+         <tr>
+         <td>{{target.id}}</td>
+         <td>
+         <img
+            src="{{target.img_link}}"
+            alt="{{target.username}}"
+            class="table-img"
+            />
+         </td>
+         <td>
+         <a
+            href="https://twitter.com/{{target.username}}"
+            target="_blank"
+            class="text-dark btn-lg"
+            style="font-size: 17px"
+            >
+         {{target.username}}
+         </a>
+         {% if target.is_private %}&nbsp;<i class="fa-solid fa-lock"></i>
+         {% endif %}
+         </td>
+         <td>
+         <div class="fav-icon" onclick="add_fav({{target.id}})">
+         {% if target.is_favorite == 1 %}
+         <i class="fa-solid fa-star"></i>
+         {% else %}
+         <i class="fa-regular fa-star"></i>
+         <!-- endif -->
+         {%endif%}
+         </div>
+         </td>
+         <td>
+         <a
+            href="{{url_for('views.profile_info', username=target.username)}}"
+            class="btn btn-dark p-2 form-control btn-sm p-2"
+            >Info</a
+            >
+         </td>
+         <td>
+         {% if target.has_following_scrape == 1 %}
+         <a
+            href="{{url_for('views.following_list', username = target.username)}}"
+            class="btn btn-success form-control btn-sm p-2"
+            >
+         Following List
+         </a>
+         {% else %}
+         <a
+            href="{{url_for('views.scrape_following', username = target.username)}}"
+            class="btn btn-dark p-2 form-control btn-sm p-2"
+            >Following Scrape
+         </a>
+         {% endif %}
+         </td>
+         <td>
+         {% if target.has_follower_scrape == 1 %}
+         <a
+            href="{{url_for('views.follower_list', username = target.username)}}"
+            class="btn btn-success form-control btn-sm p-2"
+            >
+         Followers List
+         </a>
+         {% else %}
+         <a
+            href="{{url_for('views.scrape_followers', username = target.username)}}"
+            class="btn btn-dark btn-sm form-control p-2"
+            >Followers Scrape
+         </a>
+         {% endif %}
+         </td>
+         <td>
+         {% if target.has_media_scrape == 1 %}
+         <a href="{{url_for('views.media_list', username=target.username)}}" class="btn btn-success p-2 form-control btn-sm">Media List</a>
+         {% else %}
+         <a href="{{url_for('views.scrape_media', username=target.username)}}" class="btn btn-dark btn-sm form-control p-2">Media Scrape</a>
+         {% endif %}
+         </td>
+         <td>
+         <button
+            type="button"
+            class="close btn btn-danger btn-sm form-control p-2"
+            onclick="delete_entry({{target.id}})"
+            >
+         <span aria-hidden="true">&times;</span>
+         </button>
+         </td>
+         </tr>
+         {% endfor %}
+         </tbody>
+      </table>
+      <!-- Paginate Controls -->
+      <!-- Pagination Links-->
+      <div class="text-right text-center mb-3 pb-3">
+         <a href="{{ url_for('views.landing_page', page=targets.prev_num) }}"
+            class="btn btn-outline-dark 
+            {% if targets.page == 1 %}disabled{% endif %}">
+         &laquo;
+         </a>
+         <!-- Loop through the number of pages to display a link for each-->
+         {% for page_num in targets.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+         {% if page_num %}
+         <!-- Check for the active page and set the link to "Active"-->
+         {% if targets.page == page_num %}
+         <a href="{{ url_for('views.landing_page', page=page_num) }}"
+            class="btn btn-dark">
+         {{ page_num }}
+         </a>
+         {% else %}
+         <a href="{{ url_for('views.landing_page', page=page_num) }}"
+            class="btn btn-outline-dark">
+         {{ page_num }}
+         </a>
+         {% endif %}
+         {% else %}
+         ...
+         {% endif %}
+         {% endfor %}
+         <a href="{{ url_for('views.landing_page', page=targets.next_num) }}"
+            class="btn btn-outline-dark 
+            {% if targets.page == targets.pages %}disabled{% endif %}">
+         &raquo;
+         </a>
+      </div>
+      <!-- End of Paginate Controls -->
+   </div>
+</div>
+<!--Script to remove entry-->
+<script src="{{url_for('static', filename='javascript/delete_entry.js')}}"></script>
+<!--Script to add/remove from fav-->
+<script src="{{url_for('static', filename='javascript/add_fav.js')}}"></script>
+<!-- end of content-->
+{% endblock %}

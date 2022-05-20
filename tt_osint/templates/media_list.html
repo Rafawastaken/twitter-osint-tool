@@ -1,0 +1,84 @@
+{% extends 'base.html' %} {% block content %}
+<div class="wraper">
+
+  <div class="header">
+    <div class="text-right">
+      <div class="header-page-scnd">
+        <div class="left-header-scnd">
+          <img src="{{target.img_link}}" class="header-profile-img" />
+        </div>
+        <div class="right-header-scnd">
+          <h3>
+            <span class="heavy"
+            ><a
+            href="{{url_for('views.profile_info', username=target.username)}}"
+            class="text-dark"
+            target="_blank"
+            >{{target.username.title()}}</a
+            ></span
+            >
+            Found {{total_media}} entries out of {{target.media}} total  
+          </h3>
+        </div>
+      </div>
+    </div>
+    <div class="btns-control">
+      <a
+      class="btn btn-outline-dark"
+      href="{{url_for('views.profile_info', username=target.username )}}"
+      >Profile Info</a
+      >
+      <a
+      class="btn btn-outline-dark"
+      href="{{url_for('views.landing_page')}}"
+      >Back to List</a
+      >
+      <a
+      class="btn btn-dark"
+      href="{{url_for('views.landing_page')}}"
+      >Download All</a
+      >
+    </div>
+  </div>
+  <hr/>
+      <!-- Paginate Controls -->
+      {% include 'components/paginate_media_controls.html'%}
+</div>
+
+<div class="row wraper-media">
+   {% for media in media.items %}
+   <div class="col-xl-3 col-sm-5 card-spacing">
+      <div class="card h-100 ">
+         <div class="hover-overlay ripple" data-mdb-ripple-color="light">
+           <a href="{{media.img}}" target="_blank">
+             <img
+             src="{{media.img}}"
+             class="card-img-top"
+             />
+            </a>
+         </div>
+         <div class="card-body d-flex flex-column">
+           <a href="{{media.link}}" target="_blank" class="h5 card-title btn-outline-dark btn">
+             {{media.date}}
+            </a>
+            <p class="card-text mt-3 mb-3">
+               {{media.desc}}
+            </p>
+            <div class="text-center align-items-end mt-auto">
+              <div class="btn-pos">
+                <a href="#!" class="btn btn-dark form-control">Download</a>
+                <a href="https://www.google.com/searchbyimage?image_url={{media.img}}&encoded_image=&image_content=&filename=&hl=en" class="btn btn-dark form-control" target="_blank">Reverse</a>
+              </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   {% endfor %}
+    <!-- Paginate Controls -->
+    <div class="text-center">
+
+      {% include 'components/paginate_media_controls.html'%}
+    </div>
+    </div>
+{% endblock %}
+</div>

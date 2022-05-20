@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+<!-- Content -->
+{% block content %}
+<div class="wraper">
+  <div class="header">
+    <div class="text-right">
+      <div class="header-page-scnd">
+        <div class="left-header-scnd">
+          <img src="{{target.img_link}}" class="header-profile-img" />
+        </div>
+        <div class="right-header-scnd">
+          <h3>
+            <span class="heavy"
+              ><a
+                href="{{url_for('views.profile_info', username=target.username)}}"
+                class="text-dark"
+                target="_blank"
+                >{{target.username.title()}}</a
+              ></span
+            >
+            is Following {{target.following}} accounts
+          </h3>
+        </div>
+      </div>
+    </div>
+    <div class="btns-control">
+      <a
+        class="btn btn-dark"
+        href="{{url_for('views.profile_info', username=target.username )}}"
+        >Profile Info</a
+      >
+      <a class="btn btn-dark" href="{{url_for('views.landing_page')}}"
+        >Back to List</a
+      >
+    </div>
+  </div>
+  <hr />
+  <div class="content">
+    <table
+      class="table table-striped table-hover text-center table-center-edited"
+    >
+      <thead class="thead-dark">
+        <th>#</th>
+        <th>Img</th>
+        <th>Username</th>
+        <th class="text-start">Description</th>
+        <th>Info</th>
+        <th>Following</th>
+        <th>Followers</th>
+        <th>Media</th>
+      </thead>
+      <tbody>
+        {% for f in following %}
+        <tr class="border-1">
+          <td>{{f.entry}}</td>
+          <td>
+            <img src="{{f.img}}" class="table-img" />
+          </td>
+          <td>
+            <a
+              href="https://twitter.com/{{f.username}}"
+              target="_blank"
+              class="text-dark"
+              style="font-size: 17px"
+            >
+              {{f.username}}
+            </a>
+          </td>
+          <td class="text-start">{{f.desc}}</td>
+          <td>
+            <a
+              href="{{url_for('views.profile_info', username=f.username)}}"
+              class="btn btn-dark form-control btn-sm"
+              >Info</a
+            >
+          </td>
+          <td>
+            <a
+              href="{{url_for('views.scrape_following', username = f.username)}}"
+              class="btn btn-dark form-control btn-sm"
+              >Following</a
+            >
+          </td>
+          <td>
+            <a href="#" class="btn btn-dark form-control btn-sm">Followers</a>
+          </td>
+          <td>
+            <a
+              href="{{url_for('views.scrape_media', username=f.username)}}"
+              class="btn btn-dark form-control btn-sm"
+              >Media</a
+            >
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

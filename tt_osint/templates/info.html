@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+<!-- Content -->
+{% block content %}
+<div class="wraper-no-mt">
+  <header
+    style="background-image:url({{profile.banner_link}})"
+    class="img-cover"
+    onclick=""
+  >
+    <a
+      href="{{profile.banner_link}}"
+      target="_blank"
+      class="header-link-img"
+    ></a>
+    <div class="header-btns">
+      <a
+        class="btn btn-dark btn-bg header-rs-btn btn-non-intrusive"
+        target="_blank"
+        href="https://www.google.com/searchbyimage?image_url={{profile.banner_link}}&encoded_image=&image_content=&filename=&hl=en"
+        >Reverse Search</a
+      >
+      <a
+        href="{{profile.banner_link}}"
+        class="btn btn-dark header-op-btn btn-bg btn-non-intrusive"
+        target="_blank"
+        >Open Image</a
+      >
+      <a
+        href="{{url_for('views.landing_page')}}"
+        class="btn btn-dark header-ret-btn btn-bg btn-non-intrusive"
+        >Return to List</a
+      >
+    </div>
+  </header>
+
+  <div class="wraper-info">
+    <div class="left-panel-info">
+      <a href="{{profile.img_link}}" target="_blank">
+        <img
+          src="{{profile.img_link}}"
+          class="profile-info-img"
+          id="profile-img"
+        />
+      </a>
+      <a
+        class="btn btn-dark btn-bg mt-3 text-center"
+        id="btn-profile-reverse"
+        href="https://www.google.com/searchbyimage?image_url={{profile.img_link}}&encoded_image=&image_content=&filename=&hl=en"
+        target="_blank"
+      >
+        Reverse Search
+      </a>
+    </div>
+    <div class="second-wraper">
+      <div class="middle-panel-info">
+        <h2 class="heavy">
+          <div class="username-info-page">
+            <a
+              href="https://twitter.com/{{profile.username}}"
+              id="username-profile"
+              target="_blank"
+            >
+              @{{profile.username}}
+            </a>
+            <div class="actions-username">
+              <!-- Add profile to fav -->
+              <div class="fav-icon" onclick="add_fav({{profile.id}})">
+                {% if profile.is_favorite == 1 %}
+                <i class="fa-solid fa-star"></i>
+                {% else %}
+                <i class="fa-regular fa-star"></i>
+                <!-- endif -->
+                {%endif%}
+              </div>
+              <!-- Private profile -->
+              {% if profile.is_private == 1 %}&nbsp;<i
+                class="fa-solid fa-lock"
+              ></i
+              >{% endif %}
+              <a
+                href='https://www.google.com/search?q="{{profile.username}}"'
+                class="btn btn-dark mx-2"
+                target="_blank"
+                >Search</a
+              >
+            </div>
+          </div>
+        </h2>
+
+        <p class="text-secondary">
+          {% if profile.desc %} {{profile.desc[0].upper()}}{{profile.desc[1:]}}
+          {% else %} No description to show. {% endif %}
+        </p>
+        <div class="metadata-profile">
+          <h5 class="heavy">Profile Metadata</h5>
+          <ul class="metadata-profile-list">
+            <li>Tweets: {{profile.num_tweets}}</li>
+            <li>Followers: {{profile.followers}}</li>
+            <li>Following: {{profile.following}}</li>
+            {%if profile.is_private == 0%}
+            <li>Media: {{profile.media}}</li>
+            {% endif %}
+          </ul>
+        </div>
+        <div class="more-info">
+          <h5 class="heavy">More Info</h5>
+          <div class="website">
+            {%if profile.website %} Website:
+            <a href="{{profile.website}}" tage0t="_blank">
+              {{profile.website}}
+            </a>
+            {% endif %}
+          </div>
+          {% if profile.place %}
+          <div class="location">Location: {{profile.place}}</div>
+          {% endif %}
+          <div class="joined-in">Joined in: {{profile.joined}}</div>
+        </div>
+      </div>
+      <div class="extra-panel">
+        <div class="extra-links-wraper">
+          <h5 class="heavy">
+            <a href="#" class="btn btn-sm btn-dark btn-size-add-info"
+              >Add Link</a
+            >
+          </h5>
+          <ul class="small-list">
+            <li>Instagram</li>
+            <li>Reddit</li>
+            <li>Youtube</li>
+          </ul>
+        </div>
+        <div class="extra-notes-wraper">
+          <h5 class="heavy">
+            <a href="#" class="btn btn-sm btn-dark btn-size-add-info"
+              >Add Note</a
+            >
+          </h5>
+          <ul class="small-list">
+            <li>
+              Minim commodo exercitation exercitation do et fugiat sunt nostrud
+              cillum.
+            </li>
+            <li>
+              Minim commodo exercitation exercitation do et fugiat sunt nostrud
+              cillum.
+            </li>
+            <li>
+              Minim commodo exercitation exercitation do et fugiat sunt nostrud
+              cillum.
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="right-panel-info">
+        <div class="action-container mt-3">
+          <h5 class="heavy">Actions</h5>
+          <ul class="action-buttons">
+            <li>
+              {% if profile.has_follower_scrape == 1%}
+              <a
+                class="btn btn-success form-control btn-bg"
+                href="{{url_for('views.scrape_followers', username = profile.username)}}"
+                >Followers List</a
+              >
+              {% else %}
+              <a
+                class="{% if profile.is_private == 1 %} disabled {% endif %} btn btn-dark form-control btn-bg"
+                href="{{url_for('views.scrape_followers', username=profile.username)}}"
+                >Followers Scrape</a
+              >
+              {% endif %}
+            </li>
+            <li>
+              {% if profile.has_following_scrape == 1 %}
+              <a
+                class="btn btn-success form-control btn-bg"
+                href="{{url_for('views.following_list', username = profile.username)}}"
+                >Following List</a
+              >
+              {% else %}
+              <a
+                class="{% if profile.is_private == 1 %} disabled {% endif %} btn btn-dark form-control btn-bg"
+                href="{{url_for('views.scrape_following', username=profile.username)}}"
+                >Following Scrape</a
+              >
+              {% endif %}
+            </li>
+            <li>
+              {% if profile.has_media_scrape == 1 %}
+              <a
+                class="btn btn-success form-control btn-bg"
+                href="{{url_for('views.scrape_media', username = profile.username)}}"
+                >Media List</a
+              >
+              {% else %}
+              <a
+                class="{% if profile.is_private == 1 %} disabled {% endif %} btn btn-dark form-control btn-bg"
+                href="{{url_for('views.scrape_media', username = profile.username)}}"
+                >Media Scrape</a
+              >
+              {% endif %}
+            </li>
+            <li>
+              <a
+                class="btn btn-danger form-control btn-bg"
+                onclick="delete_entry({{profile.id}})"
+                >Delete</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--Script to delete entry -->
+<script src="{{url_for('static', filename='javascript/delete_entry.js')}}"></script>
+<!--Script to add/remove from fav -->
+<script src="{{url_for('static', filename='javascript/add_fav.js')}}"></script>
+
+{% endblock %}

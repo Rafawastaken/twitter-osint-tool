@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+<!-- content -->
+{% block content %}
+<div class="wraper">
+  <div class="header">
+    <div class="text-right">Media Scrape</div>
+    <div class="btn-control">
+      <a class="btn btn-dark" href="{{url_for('views.landing_page')}}"
+        >Go Back</a
+      >
+    </div>
+  </div>
+  <hr />
+  <div class="content">
+    <form method="POST">
+      <input
+        type="text"
+        class="form-control text-center input-search"
+        name="username"
+        placeholder="Insert Target Username"
+        id="input-text"
+      />
+      <input
+        type="submit"
+        class="btn btn-dark mt-3 form-control"
+        value="Get Info"
+        id="start-btn"
+      />
+    </form>
+    <div class="loading-info text-center" id="loading-info">
+      <h3>Working Please Wait</h3>
+      <p>You'll be redirected when it's finished</p>
+    </div>
+  </div>
+</div>
+<script src="{{url_for('static', filename='javascript/loading.js')}}"></script>
+
+{% endblock %}

@@ -1,0 +1,35 @@
+<!-- Pagination Links-->
+<div class="text-right mt-3 paginate-controls">
+  <a
+    href="{{ url_for('views.media_list', page=media.prev_num, username=target.username) }}"
+    class="btn btn-outline-dark {% if media.page == 1 %}disabled{% endif %}"
+  >
+    &laquo;
+  </a>
+  <!-- Loop through the number of pages to display a link for each-->
+  {% for page_num in media.iter_pages(left_edge=1, right_edge=1, left_current=1,
+  right_current=2) %} {% if page_num %}
+  <!-- Check for the active page and set the link to "Active"-->
+  {% if media.page == page_num %}
+  <a
+    href="{{ url_for('views.media_list', page=page_num, username=target.username) }}"
+    class="btn btn-dark"
+  >
+    {{ page_num }}
+  </a>
+  {% else %}
+  <a
+    href="{{ url_for('views.media_list', page=page_num, username=target.username) }}"
+    class="btn btn-outline-dark"
+  >
+    {{ page_num }}
+  </a>
+  {% endif %} {% else %} ... {% endif %} {% endfor %}
+  <a
+    href="{{ url_for('views.media_list', page=media.next_num, username=target.username) }}"
+    class="btn btn-outline-dark {% if media.page == media.pages %}disabled{% endif %}"
+  >
+    &raquo;
+  </a>
+</div>
+<!-- End of Paginate Controls -->

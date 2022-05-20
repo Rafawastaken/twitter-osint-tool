@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+<!--Content -->
+{% block content %}
+<div class="wraper">
+  <div class="content-center">
+    <div class="display-5">Something went wrong...</div>
+    <p class="text-muted">{{e}}</p>
+    <a
+      class="btn btn-outline-dark mt-3 btn-back"
+      href="{{url_for('views.landing_page')}}"
+      >Go Back</a
+    >
+  </div>
+</div>
+{% endblock %}
