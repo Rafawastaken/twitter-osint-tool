@@ -35,6 +35,7 @@ def add_database(username, df):
     db.session.commit()
 
 def get_media(username, BASEDIR):
+    
     try:
         complete_link = f"https://nitter.net/{username}/media"    
     

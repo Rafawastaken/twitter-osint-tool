@@ -1,13 +1,12 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-
+import warnings
 from bs4 import BeautifulSoup as sp
 import pandas as pd
-
 from time import sleep
 import os, shutil
-
-from ..models import Creds
+from .. import db
+from ..models import Creds, Follower, Target
 
 def create_driver(BASE_DIR):
     # No debugging
@@ -67,7 +66,6 @@ def login_tt(driver, creds):
         driver.find_element_by_xpath('//*[@id="layers"]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div[1]/div/div/div/span/span').click()
 
         sleep(10)
-        os.system('cls')
 
         print("Login Efetuado com sucesso!")
         return True
@@ -106,7 +104,6 @@ def webscrape(content, idx, username_scrape, BASE_DIR):
             except:
                 try:
                     desc = desc.find_all(class_ = 'css-901oao css-16my406 r-poiln3 r-bcqeeo r-qvutc0')[3].text
-
                     # entry.find_all(class_ = 'css-901oao css-16my406 r-poiln3 r-bcqeeo r-qvutc0')[3].text
                 except:
                     desc = "None"
@@ -170,8 +167,6 @@ def formatar_data(username_scraped, BASE_DIR):
 
     print(f"Scraper finalizado: {len(df)} users encontrados!")
 
-    return len(df)
-
 def limpar_ambiente(BASE_DIR):
     # Apagar Ficheiros
     print("Apagar data temporaria")
@@ -185,8 +180,35 @@ def limpar_ambiente(BASE_DIR):
         except Exception as e:
             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
+def add_database(BASE_DIR, username):
+    target = Target.query.filter_by(username = username).first()
+    target.followers_csv = f'{BASE_DIR}\Data\{username}\{username}_followers.csv'
+    dataframe = pd.read_csv(target.followers_csv)
+
+    for idx in dataframe.index:
+        username = str(dataframe["username"][idx])
+        desc = str(dataframe["desc"][idx])
+        link = str(dataframe["link"][idx])
+        img = str(dataframe["img"][idx])
+        
+        follower_entry = Follower(
+            username = username,
+            desc = desc,
+            link = link,
+            img = img,
+            target = target
+            )
+        db.session.add(follower_entry)
+
+    target.has_follower_scrape = 1
+    db.session.commit()
+    
+
 def scrape_twitter(BASE_DIR, username_scrape):
+    # Hide pandas useless warnings
+    warnings.simplefilter(action='ignore', category=FutureWarning)
     try:
+        driver = create_driver(BASE_DIR)
         print(f"Starting Scraper: {username_scrape}")
         creds_query = Creds.query.filter_by(id = 1).first()
         creds = {
@@ -196,13 +218,11 @@ def scrape_twitter(BASE_DIR, username_scrape):
         }
         print(f"Using {creds.get('username')} account!")
 
-        print(BASE_DIR)
-
-        driver = create_driver(BASE_DIR)
         login_tt(driver, creds)
         scrape_user(driver, username_scrape, BASE_DIR)
         formatar_data(username_scrape, BASE_DIR)
         limpar_ambiente(BASE_DIR)
+        add_database(BASE_DIR, username_scrape)
         
         try:
             driver.close()

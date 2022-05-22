@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, redirect, render_template, request, flash,
 from sqlalchemy import func
 from zmq import has
 
-from .models import Target, Media, Creds
+from .models import Target, Media, Creds, Follower, Following
 from .scripts import tt_scraper_following, tt_scraper_followers, metadata_scrape, create_folder, nitter_scrape_media
 from . import db
 
@@ -71,7 +71,8 @@ def add_creds():
             )
             db.session.add(new_creds)
             db.session.commit()
-
+        flash("Twitter creds added with success!", category='success')
+        return redirect(url_for('views.landing_page'))
     return render_template('add_creds.html')
 
 
@@ -161,57 +162,45 @@ def following_scrape():
 # Following Scrape
 @views.route('/scrape-following/<string:username>')
 def scrape_following(username):
-    try:
-        try:
-            target = Target.query.filter_by(username = username).first()
-            creds = Creds.query.first()
+    target = Target.query.filter_by(username = username).first()
+    creds = Creds.query.first()
 
-            if not creds:
-                flash("Need to add twitter account to use scrappers...", category='danger')
-                return redirect(url_for('views.add_creds'))
+    if not target:
+        create_profile(username)
+        return redirect(url_for('views.scrape_following', username = username))
 
-            if target.is_private == 1:
-                return redirect(url_for('views.private_profile'))
-            if target.has_following_scrape == 0:
-                status = tt_scraper_following.scrape_twitter(BASEDIR, username)
-                if status:
-                    target.has_following_scrape = 1
-                    target.following_csv = f"Data/{username}/{username}_following.csv"
-                    db.session.commit()
-                    return redirect(url_for('views.following_list', username = target.username))
-                else:
-                    flash("Something went wrong while scraping...Try again", category='danger')
-                    return redirect(url_for("views.profile_info", username = target.username))
-        except:
-            create_profile(username)
-            return redirect(url_for('views.scrape_following', username = username))
-        target = target.query.filter_by(username = username).first()
-        return redirect(url_for("views.following_list", username = target.username ))
-    except Exception as e:
-        flash("Something went wrong while scraping...Try again", category='danger')
-        return redirect(url_for("views.profile_info", username = target.username))
+    if not creds:
+        flash("Need to add twitter account to use scrappers...", category='danger')
+        return redirect(url_for('views.add_creds'))
+
+    if target.is_private == 1:
+        return redirect(url_for('views.private_profile'))
+
+    if target.has_following_scrape == 0:
+        status = tt_scraper_following.scrape_twitter(BASEDIR, username)
+        if status:
+            return redirect(url_for('views.following_list', username = target.username))
+        else:
+            flash("Something went wrong while scraping...Try again", category='danger')
+            return redirect(url_for("views.profile_info", username = target.username))
+            
+    return redirect(url_for("views.following_list", username = target.username ))
+        
 
 # Following List
 @views.route("/following-list/<string:username>")
 def following_list(username):
     target = Target.query.filter_by(username = username).first()
-    df = pd.read_csv(f"{BASEDIR}\{target.following_csv}")
-    following = []
-    for idx in df.index:
-        obj = {
-            "entry":idx,
-            "username":df['username'][idx],
-            "desc":df['desc'][idx],
-            "link":df['link'][idx],
-            "img":df['img'][idx]
-        }
-        following.append(obj)
-    return render_template('following-list.html', following = following, target = target)
+    if target.has_following_scrape == 1:
+        following = Following.query.filter_by(target_id = target.id)
+        return render_template('following-list.html', following = following, target = target)
+    return redirect(url_for('views.scrape_following', username = target.username))
 
 
 ############# * Followers * #############
 
 # ! MISSING Followers Form Scrape 
+
 @views.route('/followers-scrape', methods = ['POST', 'GET'])
 def followers_scrape():
     if request.method == 'POST':
@@ -224,56 +213,41 @@ def followers_scrape():
 # Followers Scrape
 @views.route('/scrape-followers/<string:username>')
 def scrape_followers(username):
-    try:
-        try:
-            target = Target.query.filter_by(username = username).first()
-            creds = Creds.query.first()
+    target = Target.query.filter_by(username = username).first()
+    if not target: # If target exists
+        create_profile(username)
+        return redirect(url_for('views.scrape_followers', username = username))
 
-            if not creds:
-                flash("Need to add twitter account to use scrappers...", category='danger')
-                return redirect(url_for('views.add_creds'))
+    creds = Creds.query.first()
+    if not creds:
+        flash("Need to add twitter account to use scrappers...", category='danger')
+        return redirect(url_for('views.add_creds'))
 
-            if target.is_private == 1:
-                return redirect(url_for('views.private_profile'))
-            if target.has_follower_scrape == 0:
-                status = tt_scraper_followers.scrape_twitter(BASEDIR, username)
-                if status:
-                    target.has_follower_scrape = 1
-                    target.followers_csv = f"Data/{username}/{username}_followers.csv"
-                    db.session.commit()
-                    return redirect(url_for('views.follower_list', username = target.username))
-                else:
-                    flash("Something went wrong while scraping...Try again", category='danger')
-                    return redirect(url_for("views.profile_info", username = target.username))
-        except:
-            create_profile(username)
-            return redirect(url_for('views.scrape_following', username = username))
-        target = target.query.filter_by(username = username).first()
-        return redirect(url_for("views.follower_list", username = target.username ))
-    except Exception as e:
-        print(e)
-        flash("Something went wrong while scraping...Try again", category='danger')
-        return redirect(url_for("views.error_page", e = e))
+    if target.is_private == 1: # Can't scrape private profiles
+        return redirect(url_for('views.private_profile'))
+
+    if target.has_follower_scrape == 0:
+        status = tt_scraper_followers.scrape_twitter(BASEDIR, username)
+        if status:
+            return redirect(url_for('views.follower_list', username = target.username))
+        else:
+            flash("Something went wrong while scraping...Try again", category='danger')
+            return redirect(url_for("views.profile_info", username = target.username))
+
+    return redirect(url_for("views.follower_list", username = target.username ))
+
 
 # Follower List
 @views.route("/follower-list/<string:username>")
 def follower_list(username):
     target = Target.query.filter_by(username = username).first()
-    df = pd.read_csv(f"{BASEDIR}\{target.followers_csv}")
+    page = request.args.get('page', 1, type=int)
 
-    followers = []
-    for idx in df.index:
-        obj = {
-            "entry":idx,
-            "username":df['username'][idx],
-            "desc":df['desc'][idx],
-            "link":df['link'][idx],
-            "img":df['img'][idx]
-        }
-        followers.append(obj)
-
-    return render_template('follower-list.html', followers = followers, target = target)
-
+    if target.has_follower_scrape == 1:
+        followers = Follower.query.filter_by(target_id = target.id)
+        # followers = followers.paginate(page = page, per_page = PER_PAGE_MEDIA)
+        return render_template('follower-list.html', followers = followers, target = target)
+    return redirect(url_for('views.scrape_followers', username = target.username))
 
 ############# * Media * #############
 
@@ -314,8 +288,7 @@ def media_list(username):
     target = Target.query.filter_by(username = username).first()
 
     #  page = request.args.get('page', 1, type=int)
-    #  targets = Target.query.order_by(Target.id.desc()).paginate(page = page, per_page = PER_PAGE_PROFILE)
-    
+    #  targets = Target.query.order_by(Target.id.desc()).paginate(page = page, per_page = PER_PAGE_PROFILE)  
 
     if target.has_media_scrape:
         media = Media.query.filter_by(target_id = target.id)
@@ -337,6 +310,8 @@ def delete_entry():
 
     target = Target.query.get(target_id)
     media_delete = Media.query.filter_by(target_id = target_id).all()
+    followers = Follower.query.filter_by(target_id = target_id).all()
+    followings = Following.query.filter_by(target_id = target_id).all()
 
     if target: 
         try:
@@ -344,15 +319,21 @@ def delete_entry():
             print("Deleted with success!")
         except:
             print("Directory doesn't exist")
-        # remove entry from database 
+
         try:
             for m_del in media_delete: # Iterate through media inputs delete
                 db.session.delete(m_del)
+            for follower in followers:
+                db.session.delete(follower)
+            for following in followings:
+                db.session.delete(following)
 
             db.session.delete(target)
             db.session.commit()
+
         except Exception as e:
             print(e)
+            
     return jsonify({})
 
 # Add profile to favorite

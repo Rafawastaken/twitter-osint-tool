@@ -95,8 +95,8 @@
           <h5 class="heavy">Profile Metadata</h5>
           <ul class="metadata-profile-list">
             <li>Tweets: {{profile.num_tweets}}</li>
-            <li>Followers: {{profile.followers}}</li>
-            <li>Following: {{profile.following}}</li>
+            <li>Followers: {{profile.follower_number}}</li>
+            <li>Following: {{profile.following_number}}</li>
             {%if profile.is_private == 0%}
             <li>Media: {{profile.media}}</li>
             {% endif %}

@@ -1,13 +1,12 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-
+import warnings
 from bs4 import BeautifulSoup as sp
 import pandas as pd
-
 from time import sleep
 import os, shutil
-
-from ..models import Creds
+from ..models import Creds, Target, Following
+from .. import db
 
 def create_driver(BASE_DIR):
     # No debugging
@@ -183,7 +182,31 @@ def limpar_ambiente(BASE_DIR):
         except Exception as e:
             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
+def add_database(BASE_DIR, username):
+    target = Target.query.filter_by(username = username).first()
+    target.following_csv = f'{BASE_DIR}\Data\{username}\{username}_following.csv'
+    dataframe = pd.read_csv(target.following_csv)
+
+    for idx in dataframe.index:
+        username = str(dataframe["username"][idx])
+        desc = str(dataframe["desc"][idx])
+        link = str(dataframe["link"][idx])
+        img = str(dataframe["img"][idx])
+        
+        following_entry = Following(
+            username = username,
+            desc = desc,
+            link = link,
+            img = img,
+            target = target
+            )
+        db.session.add(following_entry)
+
+    target.has_following_scrape = 1
+    db.session.commit()
+
 def scrape_twitter(BASE_DIR, username_scrape):
+    warnings.simplefilter(action='ignore', category=FutureWarning)
     try:
         print(f"A iniciar Scraper: {username_scrape}")
 
@@ -200,6 +223,7 @@ def scrape_twitter(BASE_DIR, username_scrape):
         scrape_user(driver, username_scrape, BASE_DIR)
         formatar_data(username_scrape, BASE_DIR)
         limpar_ambiente(BASE_DIR)
+        add_database(BASE_DIR, username_scrape)
         
         try:
             driver.close()

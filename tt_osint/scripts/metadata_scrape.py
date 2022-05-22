@@ -94,11 +94,11 @@ def metadata_scrape(username):
             
             num_tweets = meta_obj.get("num_tweets"),
             
-            followers = meta_obj.get('num_followers'),
+            follower_number = meta_obj.get('num_followers'),
             followers_csv = None,
             has_follower_scrape = 0,
         
-            following = meta_obj.get('num_following'),
+            following_number = meta_obj.get('num_following'),
             following_csv = None,
             has_following_scrape = 0,
 
