@@ -1,6 +1,6 @@
 # Custom files
 *.db
-data/
+Data/
 __notebook_teste/
 migrations/
 TODO

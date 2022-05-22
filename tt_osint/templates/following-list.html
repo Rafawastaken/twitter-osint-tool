@@ -50,7 +50,7 @@
         <th>Media</th>
       </thead>
       <tbody>
-        {% for f in following %}
+        {% for f in following.items %}
         <tr class="border-1">
           <td>{{f.entry}}</td>
           <td>
@@ -95,6 +95,42 @@
         {% endfor %}
       </tbody>
     </table>
+    <div class="text-center">
+      <!-- Paginate controls -->
+      <div class="text-right mt-3 paginate-controls">
+        <a
+          href="{{ url_for('views.following_list', page=following.prev_num, username=target.username) }}"
+          class="btn btn-outline-dark {% if following.page == 1 %}disabled{% endif %}"
+        >
+          &laquo;
+        </a>
+        <!-- Loop through the number of pages to display a link for each-->
+        {% for page_num in following.iter_pages(left_edge=1, right_edge=1,
+        left_current=1, right_current=2) %} {% if page_num %}
+        <!-- Check for the active page and set the link to "Active"-->
+        {% if following.page == page_num %}
+        <a
+          href="{{ url_for('views.following_list', page=page_num, username=target.username) }}"
+          class="btn btn-dark"
+        >
+          {{ page_num }}
+        </a>
+        {% else %}
+        <a
+          href="{{ url_for('views.following_list', page=page_num, username=target.username) }}"
+          class="btn btn-outline-dark"
+        >
+          {{ page_num }}
+        </a>
+        {% endif %} {% else %} ... {% endif %} {% endfor %}
+        <a
+          href="{{ url_for('views.following_list', page=following.next_num, username=target.username) }}"
+          class="btn btn-outline-dark {% if following.page == following.pages %}disabled{% endif %}"
+        >
+          &raquo;
+        </a>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}

@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, redirect, render_template, request, flash, url_for, jsonify
+from psutil import users
 from sqlalchemy import func
 from zmq import has
 
@@ -191,8 +192,10 @@ def scrape_following(username):
 @views.route("/following-list/<string:username>")
 def following_list(username):
     target = Target.query.filter_by(username = username).first()
+    page = request.args.get('page', 1, type=int)
     if target.has_following_scrape == 1:
         following = Following.query.filter_by(target_id = target.id)
+        following = following.paginate(page = page, per_page = PER_PAGE_MEDIA)
         return render_template('following-list.html', following = following, target = target)
     return redirect(url_for('views.scrape_following', username = target.username))
 
@@ -245,7 +248,7 @@ def follower_list(username):
 
     if target.has_follower_scrape == 1:
         followers = Follower.query.filter_by(target_id = target.id)
-        # followers = followers.paginate(page = page, per_page = PER_PAGE_MEDIA)
+        followers = followers.paginate(page = page, per_page = PER_PAGE_MEDIA)
         return render_template('follower-list.html', followers = followers, target = target)
     return redirect(url_for('views.scrape_followers', username = target.username))
 
@@ -313,7 +316,11 @@ def delete_entry():
     followers = Follower.query.filter_by(target_id = target_id).all()
     followings = Following.query.filter_by(target_id = target_id).all()
 
-    if target: 
+    if target:
+        # Prevent delete fav profiles
+        if target.is_favorite == 1:
+            flash("Can't delete favorite profiles. Remove favorite mark to delete.", category='danger')
+            return redirect(url_for('views.profile_info', username = target.username))
         try:
             shutil.rmtree(f"{BASEDIR}\data\{target.username}")
             print("Deleted with success!")
