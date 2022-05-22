@@ -97,7 +97,7 @@
     </table>
     <div class="text-center">
       <!-- Paginate controls -->
-      <div class="text-right mt-3 paginate-controls">
+      <div class="text-right mt-3 paginate-controls paginate-list">
         <a
           href="{{ url_for('views.following_list', page=following.prev_num, username=target.username) }}"
           class="btn btn-outline-dark {% if following.page == 1 %}disabled{% endif %}"

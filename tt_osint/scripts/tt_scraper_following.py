@@ -66,9 +66,7 @@ def login_tt(driver, creds):
         driver.find_element_by_xpath('//*[@id="layers"]/div/div/div/div/div/div/div[2]/div[2]/div/div/div[2]/div[2]/div[2]/div/div[1]/div/div/div/span/span').click()
 
         sleep(10)
-        os.system('cls')
-
-        print("Login Efetuado com sucesso!")
+        print("Login successful!")
         return True
 
     except Exception as e:
@@ -208,7 +206,7 @@ def add_database(BASE_DIR, username):
 def scrape_twitter(BASE_DIR, username_scrape):
     warnings.simplefilter(action='ignore', category=FutureWarning)
     try:
-        print(f"A iniciar Scraper: {username_scrape}")
+        print(f"Starting Scraper: {username_scrape}")
 
         creds_query = Creds.query.filter_by(id = 1).first()
         creds = {
