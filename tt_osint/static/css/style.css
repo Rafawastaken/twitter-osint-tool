@@ -301,3 +301,37 @@ td {
 .paginate-list {
   padding-bottom: 2em;
 }
+
+.left-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.btns-control-list {
+  display: flex;
+  width: 100%;
+  gap: 0.3em;
+}
+
+.search-input-list {
+  background-color: rgb(0, 0, 0, 0);
+  border-radius: 5px;
+  text-align: center;
+  color: black;
+  border: 1px solid #0f0f0f;
+
+  height: 40px;
+  width: 100%;
+  font-size: 16px;
+  padding: 0.5em 2em;
+  color: rgb(26, 26, 26);
+}
+
+.search-input-list:focus {
+  border: 1px solid #000000;
+  outline: 1px solid #000000;
+  box-shadow: none;
+  background-color: rgb(0, 0, 0, 0);
+}

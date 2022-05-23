@@ -92,7 +92,7 @@ def landing_page():
 def landing_page_order(type, direction):
     page = request.args.get('page', 1, type=int)    
     has_query = False
-
+    
     if type == "id" and direction == "asc":
         targets = Target.query.order_by(Target.id.asc()).paginate(page = page, per_page = PER_PAGE_PROFILE)
     elif type == "id" and direction == "desc":
@@ -111,8 +111,8 @@ def landing_page_order(type, direction):
 # Search target engine
 @views.route('/search', methods=['GET', 'POST'])
 def filter_search():
-    page = request.args.get('page', 1, type=int)
-    query = request.args.get('search-query')
+    page = request.form.get('page', 1, type=int)
+    query = request.form.get('search-query')
     if not query:
         flash("No input added")
         return redirect(url_for('views.landing_page'))
@@ -241,10 +241,15 @@ def scrape_followers(username):
 
 
 # Follower List
-@views.route("/follower-list/<string:username>")
+@views.route("/follower-list/<string:username>", methods = ['POST', 'GET'])
 def follower_list(username):
     target = Target.query.filter_by(username = username).first()
     page = request.args.get('page', 1, type=int)
+
+    if request.method == "POST":
+        search_query = request.form.get('search_query')
+        targets = Target.query.filter(Target.username.contains(query))
+        targets = targets.paginate(page = page, per_page = PER_PAGE_PROFILE)
 
     if target.has_follower_scrape == 1:
         followers = Follower.query.filter_by(target_id = target.id)

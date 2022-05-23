@@ -23,15 +23,29 @@
         </div>
       </div>
     </div>
-    <div class="btns-control">
-      <a
-        class="btn btn-dark"
-        href="{{url_for('views.profile_info', username=target.username )}}"
-        >Profile Info</a
-      >
-      <a class="btn btn-dark" href="{{url_for('views.landing_page')}}"
-        >Back to List</a
-      >
+    <div class="left-panel">
+      <div class="btns-control-list">
+        <a
+          class="btn btn-dark btn-list form-control"
+          href="{{url_for('views.profile_info', username=target.username )}}"
+          >Profile Info</a
+        >
+        <a
+          class="btn btn-dark btn-list form-control"
+          href="{{url_for('views.landing_page')}}"
+          >Back to List</a
+        >
+      </div>
+      <div class="search-bar-list mt-2">
+        <form method="POST">
+          <input
+            type="text"
+            class="search-input-list"
+            placeholder="Search for user"
+            name="search_query"
+          />
+        </form>
+      </div>
     </div>
   </div>
   <hr />
