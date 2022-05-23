@@ -27,8 +27,8 @@ In my case, I have it running on a Raspberry Pi 4 - 2gb.
 To install it, simpely do: 
 1. python3 -m pip install -r requirements.txt 
 2. In tt_osint create 2 folders - key sensitive: 
-    2.1 - "Data" -> Will store the CSVs and Media downloaded - it creates a folder to every profile scraped.
-    2.2 - "database" -> Will store "database.db" 
+2.1 - "Data" -> Will store the CSVs and Media downloaded - it creates a folder to every profile scraped.
+2.2 - "database" -> Will store "database.db" 
 3. python3 run.py
 
 
