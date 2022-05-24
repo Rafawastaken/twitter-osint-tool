@@ -12,13 +12,13 @@
           <h3>
             <span class="heavy"
               ><a
-                href="{{url_for('views.profile_info', username=target.username)}}"
+                href="https://twitter.com/{{target.username}}"
                 class="text-dark"
                 target="_blank"
                 >{{target.username.title()}}</a
               ></span
             >
-            is Following {{target.following_number}} accounts
+            has {{target.follower_number}} followers
           </h3>
         </div>
       </div>
@@ -64,7 +64,7 @@
         <th>Media</th>
       </thead>
       <tbody>
-        {% for f in following.items %}
+        {% for f in followers.items %}
         <tr class="border-1">
           <td>{{f.entry}}</td>
           <td>
@@ -113,33 +113,33 @@
       <!-- Paginate controls -->
       <div class="text-right mt-3 paginate-controls paginate-list">
         <a
-          href="{{ url_for('views.following_list', page=following.prev_num, username=target.username) }}"
-          class="btn btn-outline-dark {% if following.page == 1 %}disabled{% endif %}"
+          href="{{ url_for('views.follower_list', page=followers.prev_num, username=target.username) }}"
+          class="btn btn-outline-dark {% if followers.page == 1 %}disabled{% endif %}"
         >
           &laquo;
         </a>
         <!-- Loop through the number of pages to display a link for each-->
-        {% for page_num in following.iter_pages(left_edge=1, right_edge=1,
+        {% for page_num in followers.iter_pages(left_edge=1, right_edge=1,
         left_current=1, right_current=2) %} {% if page_num %}
         <!-- Check for the active page and set the link to "Active"-->
-        {% if following.page == page_num %}
+        {% if followers.page == page_num %}
         <a
-          href="{{ url_for('views.following_list', page=page_num, username=target.username) }}"
+          href="{{ url_for('views.follower_list', page=page_num, username=target.username) }}"
           class="btn btn-dark"
         >
           {{ page_num }}
         </a>
         {% else %}
         <a
-          href="{{ url_for('views.following_list', page=page_num, username=target.username) }}"
+          href="{{ url_for('views.follower_list', page=page_num, username=target.username) }}"
           class="btn btn-outline-dark"
         >
           {{ page_num }}
         </a>
         {% endif %} {% else %} ... {% endif %} {% endfor %}
         <a
-          href="{{ url_for('views.following_list', page=following.next_num, username=target.username) }}"
-          class="btn btn-outline-dark {% if following.page == following.pages %}disabled{% endif %}"
+          href="{{ url_for('views.follower_list', page=followers.next_num, username=target.username) }}"
+          class="btn btn-outline-dark {% if followers.page == followers.pages %}disabled{% endif %}"
         >
           &raquo;
         </a>

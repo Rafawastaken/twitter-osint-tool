@@ -18,7 +18,7 @@
          {% if has_query %}
             <a href='{{url_for("views.landing_page")}}' class="btn btn-dark">Return</a>
          {% endif %}
-         <form method="GET" action="search" class="form-style">
+         <form method="POST" action="search" class="form-style">
             <input class="input-search width-75" placeholder="Search User" name="search-query" />
             <button class="btn btn-outline-dark search-btn" type="input">Search</button>
          </form>
