@@ -25,12 +25,15 @@ In my case, I have it running on a Raspberry Pi 4 - 2gb.
 
 
 To install it, simpely do: 
-1. python3 -m pip install -r requirements.txt 
-2. In tt_osint create 2 folders - key sensitive: 
-3 "Data" -> Will store the CSVs and Media downloaded - it creates a folder to every profile scraped.
-2.2 "database" -> Will store "database.db" 
-3. python3 run.py
-
+<ol>
+<li> python3 -m pip install -r requirements.txt </li>
+<li> In tt_osint create 2 folders - key sensitive: </li>
+<ol>
+<li>"Data" -> Will store the CSVs and Media downloaded - it creates a folder to every profile scraped.</li>
+<li>2.2 "database" -> Will store "database.db" </li>
+</ol>
+<li>3. python3 run.py</li>
+</ol>
 
 If it's the first time using the application in order to webscrape profiles you need to add a twitter account - Use a burner account, or something you won't mind getting blocked.
 Keep in mind that sometimes the login in twitter fails, so you might need to try sometimes.
@@ -38,6 +41,6 @@ Keep in mind that sometimes the login in twitter fails, so you might need to try
 ## Upcoming Features
 <ol>
 <li> Make notes in info page functional. </li>
-<li>Make reverse search username in specific websites functionar. Most of the logic is done, but want to make everything else stable before.</li>
+<li>Make reverse search username in specific websites functional. Most of the logic is done, but want to make everything else stable before.</li>
 <li> Figure out a better way to handle the error in login in selenium.</li>
 </ol>
