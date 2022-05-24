@@ -15,6 +15,7 @@
             >
          <a href='{{url_for("views.followers_scrape")}}' class="btn btn-dark">Followers Scrape</a>
          <a href='{{url_for("views.media_scrape")}}' class="btn btn-dark">Media Scrape</a>
+         <a href='{{url_for("views.add_creds")}}' class="btn btn-dark">Twitter Creds</a>
          {% if has_query %}
             <a href='{{url_for("views.landing_page")}}' class="btn btn-dark">Return</a>
          {% endif %}

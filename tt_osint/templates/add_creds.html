@@ -1,25 +1,48 @@
-{% extends 'base.html' %} {% block content %}
-<h3>Fill the following form to enable scrapping modules</h3>
-<a class="text-muted" href="#">See More</a>
-<form method="POST">
-  <input
-    name="username"
-    placeholder="Insert username address"
-    type="text"
-    required
-  />
-  <input
-    name="email"
-    placeholder="Insert email address"
-    type="email"
-    required
-  />
-  <input
-    name="password"
-    placeholder="Insert password"
-    type="password"
-    required
-  />
-  <input type="submit" value="Add" />
-</form>
+{% extends 'base.html' %}
+<!-- content -->
+{% block content %}
+<div class="wraper">
+  <div class="header">
+    <div class="text-right">Info Scrape</div>
+    <div class="btn-control">
+      <a class="btn btn-dark" href="{{url_for('views.landing_page')}}"
+        >Go Back</a
+      >
+    </div>
+  </div>
+  <hr />
+  <div class="content">
+    <form method="POST" class="form-creds">
+      <input
+      name="username"
+      placeholder="Insert username address"
+      class="form-control text-center input-search w-50"
+      type="text"
+      required
+      />
+      <input
+      name="email"
+      placeholder="Insert email address"
+      class="form-control text-center input-search w-50"
+      type="email"
+      required
+    />
+    <input
+      name="password"
+      placeholder="Insert password"
+      class="form-control text-center input-search w-50"
+      type="password"
+      required
+      />
+      <input type="submit" value="Add" class="btn btn-dark w-50" />
+    </form>
+    <div class="loading-info text-center" id="loading-info">
+      <h3>Working Please Wait</h3>
+      <p>You'll be redirected when it's finished</p>
+    </div>
+  </div>
+</div>
+<script src="{{url_for('static', filename='javascript/loading.js')}}"></script>
+
 {% endblock %}
+

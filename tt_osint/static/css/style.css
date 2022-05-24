@@ -309,7 +309,7 @@ td {
   align-items: center;
 }
 
-.btns-control-list {
+.btns-control-listd {
   display: flex;
   width: 100%;
   gap: 0.3em;
@@ -334,4 +334,12 @@ td {
   outline: 1px solid #000000;
   box-shadow: none;
   background-color: rgb(0, 0, 0, 0);
+}
+
+.form-creds{
+  display: flex;
+  flex-direction: column;
+  gap:1em;
+  align-items: center;
+  justify-content: center;
 }
