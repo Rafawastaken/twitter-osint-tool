@@ -27,7 +27,7 @@ In my case, I have it running on a Raspberry Pi 4 - 2gb.
 To install it, simpely do: 
 1. python3 -m pip install -r requirements.txt 
 2. In tt_osint create 2 folders - key sensitive: 
-2.1 "Data" -> Will store the CSVs and Media downloaded - it creates a folder to every profile scraped.
+3 "Data" -> Will store the CSVs and Media downloaded - it creates a folder to every profile scraped.
 2.2 "database" -> Will store "database.db" 
 3. python3 run.py
 
@@ -36,8 +36,8 @@ If it's the first time using the application in order to webscrape profiles you 
 Keep in mind that sometimes the login in twitter fails, so you might need to try sometimes.
 
 ## Upcoming Features
-
-1. Creating a Search method for search profiles in followers and following lists -> Will restructure big part of interface. Instead of a different template for following and follower list, create a template list that recieves "followers\followes" and lists it.
-2. Make notes in info page functional.
-3. Make reverse search username in specific websites functionar. Most of the logic is done, but want to make everything else stable before.
-4. Figure out a better way to handle the error in login.
+<ol>
+<li> Make notes in info page functional. </li>
+<li>Make reverse search username in specific websites functionar. Most of the logic is done, but want to make everything else stable before.</li>
+<li> Figure out a better way to handle the error in login in selenium.</li>
+</ol>
