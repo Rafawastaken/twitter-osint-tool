@@ -125,6 +125,7 @@
             >
           </h5>
           <ul class="small-list">
+          {% if links %}
             {% for link in links %}
               <li>
                 <a class="link-dark" href="{{link.url}}" target="_blank">
@@ -132,6 +133,9 @@
               </a>
             </li>
             {% endfor %}
+            {% else %}
+            <li><p class="text-muted">No Links Found</p></li>
+            {% endif %}
           </ul>
         </div>
         <div class="extra-notes-wraper">

@@ -74,6 +74,7 @@ def add_creds():
             )
             db.session.add(new_creds)
             db.session.commit()
+
         flash("Twitter creds added with success!", category='success')
         return redirect(url_for('views.landing_page'))
     return render_template('add_creds.html')
@@ -143,11 +144,12 @@ def get_info():
 @views.route('/profile-info/<string:username>')
 def profile_info(username):
     profile = Target.query.filter_by(username=username).first()
+
     if not profile:
         create_profile(username)
 
     # List of links found
-    if profile.custom_links:
+    if  profile.custom_links:
         list_links = profile.custom_links.split('%')
         links = []
         for link in list_links:
@@ -156,10 +158,13 @@ def profile_info(username):
             link_obj = {
                 "website":link[0],
                 "url":link[1]
-             }
+                }
 
             links.append(link_obj)
 
+    else:
+        links = False
+        
     return render_template("info.html", profile = profile, links = links)
 
 
