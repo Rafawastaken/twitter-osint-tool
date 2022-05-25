@@ -44,7 +44,7 @@ class Target(db.Model):
     custom_links = db.Column(db.String(2000)) # Other Links 
     custom_notes = db.Column(db.String(2000)) # Custom notes
 
-    is_favorite = db.Column(db.Integer, default = 0)
+    is_favorite = db.Column(db.Integer, default = 0) # If profile is fav
 
 # database table to store media. Has correlation with Target
 class Media(db.Model):

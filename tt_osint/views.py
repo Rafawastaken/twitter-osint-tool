@@ -4,7 +4,8 @@ from sqlalchemy import func
 from zmq import has
 
 from .models import Target, Media, Creds, Follower, Following
-from .scripts import tt_scraper_following, tt_scraper_followers, metadata_scrape, create_folder, nitter_scrape_media
+from .scripts import tt_scraper_following, tt_scraper_followers, metadata_scrape
+from .scripts import create_folder, nitter_scrape_media
 from . import db
 
 from time import sleep
@@ -131,6 +132,7 @@ def get_info():
     if request.method == 'POST':
         username = request.form.get('username')
         target = Target.query.filter_by(username = username).first()
+
         if not target:
             create_profile(username)
             sleep(1) # Prevent redirect before page be complete
@@ -143,10 +145,22 @@ def profile_info(username):
     profile = Target.query.filter_by(username=username).first()
     if not profile:
         create_profile(username)
-        sleep(3)
-        profile = Target.query.filter_by(username=username).first()
-        return render_template("info.html", profile = profile)
-    return render_template("info.html", profile = profile)
+
+    # List of links found
+    if profile.custom_links:
+        list_links = profile.custom_links.split('%')
+        links = []
+        for link in list_links:
+            link = link.split("&")
+
+            link_obj = {
+                "website":link[0],
+                "url":link[1]
+             }
+
+            links.append(link_obj)
+
+    return render_template("info.html", profile = profile, links = links)
 
 
 ############# * Following * #############

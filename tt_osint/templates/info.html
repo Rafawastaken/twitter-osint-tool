@@ -125,9 +125,13 @@
             >
           </h5>
           <ul class="small-list">
-            <li>Instagram</li>
-            <li>Reddit</li>
-            <li>Youtube</li>
+            {% for link in links %}
+              <li>
+                <a class="link-dark" href="{{link.url}}" target="_blank">
+                {{link.website.title()}}
+              </a>
+            </li>
+            {% endfor %}
           </ul>
         </div>
         <div class="extra-notes-wraper">

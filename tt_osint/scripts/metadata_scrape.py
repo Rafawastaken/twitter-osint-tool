@@ -82,9 +82,31 @@ def scrape(username):
 
     return profile_metadata
 
+def links_finder(username):
+    obj_links = {
+        "instagram"  : f'https://www.instagram.com/{username}/'  ,
+        "behance"    : f'https://www.behance.net/{username}/',
+        "vsco"       : f'https://vsco.co/{username}/gallery',
+        "linktr"     : f"https://linktr.ee/{username}",
+    }
+
+    arr_links = []
+
+    for link in obj_links: 
+        attemp = obj_links[link]
+        r = requests.get(attemp)
+
+        if r.status_code == 200: # If website response = 200, add to list
+            arr_links.append(f"{link}&{attemp}%")
+
+    list_links = ''.join(map(str, arr_links))[:-1]
+
+    return list_links
+
 def metadata_scrape(username):
     try:
         meta_obj = scrape(username)
+        links = links_finder(username)
         # Create database 
         target_add = Target(
             username = username,
@@ -112,7 +134,8 @@ def metadata_scrape(username):
             joined = meta_obj.get('join_date'),
             website = meta_obj.get('website'),
             desc = meta_obj.get('desc'),
-            custom_links = None,
+            
+            custom_links = links,
             custom_notes = None
         )
         # Add and save to database
