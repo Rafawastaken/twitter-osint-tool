@@ -147,9 +147,11 @@ def profile_info(username):
 
     if not profile:
         create_profile(username)
+        # Need to query again
+        profile = Target.query.filter_by(username=username).first()
 
     # List of links found
-    if  profile.custom_links:
+    if profile.custom_links:
         list_links = profile.custom_links.split('%')
         links = []
         for link in list_links:

@@ -88,6 +88,10 @@ def links_finder(username):
         "behance"    : f'https://www.behance.net/{username}/',
         "vsco"       : f'https://vsco.co/{username}/gallery',
         "linktr"     : f"https://linktr.ee/{username}",
+        "facebook"   : f"https://www.facebook.com/{username}",
+        "redbubble"  : f"https://www.redbubble.com/people/{username}",
+        "clubhouse"  : f"https://www.clubhouse.com/@{username}",
+        "pinterest"  : f"https://www.pinterest.com/{username}/",
     }
 
     arr_links = []
