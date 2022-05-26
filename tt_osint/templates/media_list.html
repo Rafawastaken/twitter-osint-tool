@@ -21,7 +21,8 @@
         </div>
       </div>
     </div>
-    <div class="btns-control">
+    <div class="left-panel">
+    <div class="btns-control-list">
       <a
         class="btn btn-outline-dark"
         href="{{url_for('views.profile_info', username=target.username )}}"
@@ -33,8 +34,19 @@
       <a class="btn btn-dark" href="{{url_for('views.landing_page')}}"
         >Download All</a
       >
+      <div class="search-bar-list mt-2">
+        <form method="POST">
+          <input
+          type="text"
+          class="search-input-list"
+          placeholder="Search for user"
+          name="search_query"
+          />
+        </form>
+      </div>
     </div>
   </div>
+</div>
   <hr />
   <!-- Paginate Controls -->
   {% include 'components/paginate_media_controls.html'%}

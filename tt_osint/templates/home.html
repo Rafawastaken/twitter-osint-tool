@@ -69,7 +69,17 @@
             <th>Info</th>
             <th>Following</th>
             <th>Followers</th>
-            <th>Media</th>
+            <th>Media
+               <a class="link-dark"
+               href="{{url_for('views.landing_page_order', type='media', direction='asc')}}"
+               ><i class="fa-solid fa-arrow-down"></i
+               ></a>
+            <a class="link-dark"
+               href="{{url_for('views.landing_page_order', type='media', direction='desc')}}"
+               >
+               <i class="fa-solid fa-arrow-up"></i
+                  >
+            </th>
             <th>Del</th>
          </thead>
          <tbody>

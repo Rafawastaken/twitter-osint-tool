@@ -108,6 +108,10 @@ def landing_page_order(type, direction):
         targets = Target.query.order_by(Target.is_favorite.asc()).paginate(page = page, per_page = PER_PAGE_PROFILE)
     elif type == "fav" and direction == "desc":
         targets = Target.query.order_by(Target.is_favorite.desc()).paginate(page = page, per_page = PER_PAGE_PROFILE)
+    elif type == "media" and direction == "asc":
+        targets = Target.query.order_by(Target.has_media_scrape.asc()).paginate(page = page, per_page = PER_PAGE_PROFILE)
+    elif type == "media" and direction == "desc":
+        targets = Target.query.order_by(Target.has_media_scrape.desc()).paginate(page = page, per_page = PER_PAGE_PROFILE)
 
     return render_template('home.html', targets = targets, has_query = has_query)
 
@@ -324,13 +328,20 @@ def scrape_media(username):
     return redirect(url_for('views.error_page'))
 
 # Media Display
-@views.route('/media/<string:username>')
+@views.route('/media/<string:username>', methods=['POST', 'GET'])
 def media_list(username):
     page = request.args.get('page', 1, type=int)
     target = Target.query.filter_by(username = username).first()
 
-    #  page = request.args.get('page', 1, type=int)
-    #  targets = Target.query.order_by(Target.id.desc()).paginate(page = page, per_page = PER_PAGE_PROFILE)  
+    # if search is submited filter results 
+    if request.method == "POST":
+        search_query = request.form.get('search_query')
+        # Query to find search query in database entry in user
+        media = Media.query.filter(Media.target_id == target.id, Media.desc.contains(search_query))
+        media = media.paginate(page = page, per_page = PER_PAGE_MEDIA)
+        total_media = Media.query.filter_by(target_id = target.id).count()
+
+        return render_template('media_list.html', media = media, target = target, total_media = total_media)      
 
     if target.has_media_scrape:
         media = Media.query.filter_by(target_id = target.id)
@@ -339,7 +350,7 @@ def media_list(username):
         return render_template('media_list.html', media = media, target = target, total_media = total_media)      
     
     flash(f"{username.title()} doesn't have media scrape. Scrapping now", category="danger")
-    return redirect(url_for("views.error_page"))
+    return redirect(url_for("views.scrape_media", username = username))
         
 
 ############# * JSON Requests * #############
