@@ -74,7 +74,7 @@
         <p class="card-text mt-3 mb-3">{{media.desc}}</p>
         <div class="text-center align-items-end mt-auto">
           <div class="btn-pos">
-            <a href="#!" class="btn btn-dark form-control">Download</a>
+            <a href="{{url_for('views.download_image', username = target.username, id = media.id)}}" class="btn btn-dark form-control">Download</a>
             <a
               href="https://www.google.com/searchbyimage?image_url={{media.img}}&encoded_image=&image_content=&filename=&hl=en"
               class="btn btn-dark form-control"

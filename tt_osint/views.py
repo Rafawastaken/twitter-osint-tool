@@ -129,6 +129,7 @@ def filter_search():
 
     return render_template('home.html', targets = targets, has_query = has_query)
 
+
 ############# * Info Page * #############
 
 # Form to get info
@@ -359,21 +360,34 @@ def download_all_media(username):
     target = Target.query.filter_by(username = username).first()
     if target.has_media_scrape:
         media_list = Media.query.filter_by(target_id = target.id)
-        donwload_folder = target.media_path_download
+        download_folder = target.media_path_download
 
         for enum, media in enumerate(media_list):
             print(f"Downloading {enum + 1} out of {media_list.count()}", end = '\r')
             link_download = media.img
             r = requests.get(link_download)
             im = Image.open(io.BytesIO(r.content))
-            im.save(f'{donwload_folder}/{enum}.jpg')
+            im.save(f'{download_folder}/{enum}.jpg')
         
-        flash(f"Downloaded {enum} images. You can find them at {donwload_folder}", category='success')
+        flash(f"Downloaded {enum} images. You can find them at {download_folder}", category='success')
         return redirect(url_for('views.media_list', username = username))
     
     flash(f"{username}, doesn't have media scrape. Scrapping now...", category='danger')
     return redirect(url_for('views.scrape_media', username = username ))
         
+# Download Single Image
+@views.route('download-media/<string:username>/<int:id>')
+def download_image(username, id):
+    target = Target.query.filter_by(username = username).first()
+
+    if target.has_media_scrape:
+        media_download = Media.query.filter(Media.target_id == target.id, Media.id == id).first()
+        download_folder = target.media_path_download
+        print('Downloading')
+        r = requests.get(media_download.img)
+        im = Image.open(io.BytesIO(r.content))
+        im.save(f'{download_folder}/{id}.jpg')
+        return redirect(request.referrer) # redirect to current page
 
 ############# * JSON Requests * #############
 
