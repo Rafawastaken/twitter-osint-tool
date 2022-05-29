@@ -42,7 +42,6 @@ class Target(db.Model):
     desc = db.Column(db.String(300)) # Desc profile
 
     custom_links = db.Column(db.String(2000)) # Other Links 
-    custom_notes = db.Column(db.String(2000)) # Custom notes
 
     is_favorite = db.Column(db.Integer, default = 0) # If profile is fav
 
