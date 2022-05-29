@@ -336,6 +336,7 @@ def media_list(username):
     # if search is submited filter results 
     if request.method == "POST":
         search_query = request.form.get('search_query')
+        
         # Query to find search query in database entry in user
         media = Media.query.filter(Media.target_id == target.id, Media.desc.contains(search_query))
         media = media.paginate(page = page, per_page = PER_PAGE_MEDIA)
@@ -351,6 +352,20 @@ def media_list(username):
     
     flash(f"{username.title()} doesn't have media scrape. Scrapping now", category="danger")
     return redirect(url_for("views.scrape_media", username = username))
+
+# Download All Media
+@views.route('/download-media/<string:username>')
+def download_all_media(username):
+    target = Target.query.filter_by(username = username).first()
+    if target.has_media_scrape:
+        media_list = Media.query.filter_by(target_id = target.id)
+        for media in media_list:
+            continue
+            
+        return "Has media scrape"
+    
+    flash(f"{username}, doesn't have media scrape. Scrapping now...", category='danger')
+    return redirect(url_for('views.scrape_media', username = username ))
         
 
 ############# * JSON Requests * #############

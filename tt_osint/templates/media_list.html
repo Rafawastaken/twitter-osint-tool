@@ -31,9 +31,11 @@
       <a class="btn btn-outline-dark" href="{{url_for('views.landing_page')}}"
         >Back to List</a
       >
-      <a class="btn btn-dark" href="{{url_for('views.landing_page')}}"
+      <a id="download-media" class="btn btn-dark" href="{{url_for('views.download_all_media', username = target.username )}}"
         >Download All</a
       >
+      <!-- it will display when Download All btn is clicked and before redirect-->
+      <div id="text-download" class="text-download h5 mt-3">Downloading Media. Please wait...</div>
       <div class="search-bar-list mt-2">
         <form method="POST">
           <input
@@ -90,4 +92,5 @@
     {% include 'components/paginate_media_controls.html'%}
   </div>
 </div>
+<script src="{{url_for('static', filename='javascript/download.js')}}"></script>
 {% endblock %}
