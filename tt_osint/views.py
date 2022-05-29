@@ -1,19 +1,19 @@
 from flask import Blueprint, jsonify, redirect, render_template, request, flash, url_for, jsonify
-from psutil import users
 from sqlalchemy import func
-from zmq import has
+
+import requests
+from PIL import Image
 
 from .models import Target, Media, Creds, Follower, Following
 from .scripts import tt_scraper_following, tt_scraper_followers, metadata_scrape
 from .scripts import create_folder, nitter_scrape_media
 from . import db
 
-from time import sleep
-import pandas as pd 
-
+from time import sleep # Delays
 import shutil # Delte folders + content
 import json # Json request
 import os # System files
+import io
 
 # Config Views
 views = Blueprint('views', __name__)
@@ -359,10 +359,17 @@ def download_all_media(username):
     target = Target.query.filter_by(username = username).first()
     if target.has_media_scrape:
         media_list = Media.query.filter_by(target_id = target.id)
-        for media in media_list:
-            continue
-            
-        return "Has media scrape"
+        donwload_folder = target.media_path_download
+
+        for enum, media in enumerate(media_list):
+            print(f"Downloading {enum + 1} out of {media_list.count()}", end = '\r')
+            link_download = media.img
+            r = requests.get(link_download)
+            im = Image.open(io.BytesIO(r.content))
+            im.save(f'{donwload_folder}/{enum}.jpg')
+        
+        flash(f"Downloaded {enum} images. You can find them at {donwload_folder}", category='success')
+        return redirect(url_for('views.media_list', username = username))
     
     flash(f"{username}, doesn't have media scrape. Scrapping now...", category='danger')
     return redirect(url_for('views.scrape_media', username = username ))
